@@ -134,7 +134,7 @@ function App() {
       });
       if (req) {
         setProvinces(
-          req.data.data.filter((i) => i?._id === me?.userAreaId?._id)
+          req.data.data.filter((i) => i?.country === me?.userAreaId?._id)
         );
       }
     } catch (err) {
@@ -154,7 +154,8 @@ function App() {
           req.data.data.filter(
             (i) =>
               i?._id === me?.userAreaId?._id ||
-              i?.province?._id === me?.userAreaId?._id
+              i?.province?._id === me?.userAreaId?._id ||
+              i?.province?.country === me?.userAreaId?._id
           )
         );
       }
@@ -175,7 +176,8 @@ function App() {
           req.data.data.filter(
             (i) =>
               i?._id === me?.userAreaId?._id ||
-              i?.province?._id === me?.userAreaId?._id
+              i?.province?._id === me?.userAreaId?._id ||
+              i?.province?.country === me?.userAreaId?._id
           )
         );
       }
@@ -196,7 +198,8 @@ function App() {
         const validTehsils = allData.filter(
           (i) =>
             i?.district?.division?._id === me?.userAreaId?._id ||
-            i?.district?.division?.province?._id === me?.userAreaId?._id
+            i?.district?.division?.province?._id === me?.userAreaId?._id ||
+            i?.district?.division?.province?.country === me?.userAreaId?._id
         );
         setTehsils(validTehsils);
       }
@@ -217,7 +220,8 @@ function App() {
         const validDistricts = allData.filter(
           (i) =>
             i?.division?._id === me?.userAreaId?._id ||
-            i?.division?.province?._id === me?.userAreaId?._id
+            i?.division?.province?._id === me?.userAreaId?._id ||
+            i?.division?.province?.country === me?.userAreaId?._id
         );
         setDistricts(validDistricts);
         dis = validDistricts;
@@ -237,7 +241,22 @@ function App() {
       if (req) {
         const allData = req.data.data;
         const type = localStorage.getItem("@type");
-        if (type === "province") {
+        if (type === "country") {
+          setHalqas(
+            allData?.filter((halqa) => {
+              if (halqa?.parentType === "Maqam") {
+                return (
+                  halqa?.parentId?.province?.country === me?.userAreaId?._id
+                );
+              } else {
+                return (
+                  halqa?.parentId?.district?.division?.province?.country ===
+                  me?.userAreaId?._id
+                );
+              }
+            })
+          );
+        } else if (type === "province") {
           setHalqas(
             allData.filter((i) => {
               if (i?.parentType === "Maqam") {

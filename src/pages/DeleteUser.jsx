@@ -86,35 +86,18 @@ export const DeleteUser = () => {
   const deleteUser = async (user) => {
     setLoading(true);
     try {
-      if (user?.isDeleted) {
-        let isConfirmed = window.confirm(
-          `Are you sure you want to activate ${user?.email} with the previous rights?`
-        );
-        if (isConfirmed) {
-          const req = await instance.patch("/user/active/" + user?._id, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("@token")}`,
-            },
-          });
-          if (req) {
-            await getNazim();
-            dispatch({ type: "SUCCESS", payload: req.data?.message });
-          }
-        }
-      } else {
-        let isConfirmed = window.confirm(
-          `Are you sure you want to delete ${user?.email} ?`
-        );
-        if (isConfirmed) {
-          const req = await instance.delete("/user/" + user?._id, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("@token")}`,
-            },
-          });
-          if (req) {
-            await getNazim();
-            dispatch({ type: "SUCCESS", payload: req.data?.message });
-          }
+      let isConfirmed = window.confirm(
+        `Are you sure you want to delete ${user?.email} ?`
+      );
+      if (isConfirmed) {
+        const req = await instance.delete("/user/" + user?._id, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("@token")}`,
+          },
+        });
+        if (req) {
+          await getNazim();
+          dispatch({ type: "SUCCESS", payload: req.data?.message });
         }
       }
     } catch (err) {
@@ -185,7 +168,6 @@ export const DeleteUser = () => {
 
     setLoading(false);
   };
-  console.log(singleUser);
   const updateStatus = async () => {
     const data = {
       nazim: userAreaType,
@@ -193,9 +175,9 @@ export const DeleteUser = () => {
       userAreaId: selectedId,
       userId: singleUser?._id,
     };
-
+    let req;
     try {
-      const req = await instance.put("/user/update-status", data, {
+      req = await instance.put("/user/update-status", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("@token")}`,
@@ -203,8 +185,8 @@ export const DeleteUser = () => {
       });
       dispatch({ type: "SUCCESS", payload: req.data?.message });
       getNazim();
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      dispatch({ type: "ERROR", payload: err?.response?.data?.message });
     }
   };
   useEffect(() => {
@@ -334,6 +316,7 @@ export const DeleteUser = () => {
                 <tr>
                   <th></th>
                   <th>Name</th>
+                  <th>Nazim Type</th>
                   <th>Email</th>
                   <th>
                     {localStorage.getItem("@type") === "province"
@@ -351,6 +334,18 @@ export const DeleteUser = () => {
                     <tr key={index}>
                       <th>{index + 1}</th>
                       <td>{maqam?.name || "-"}</td>
+                      <td className="min-w-[10rem]">
+                        {maqam?.nazimType
+                          ?.replace(/-/g, " ") // Replace hyphens with spaces
+                          .split(" ") // Split the string into an array of words
+                          .map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          ) // Capitalize the first letter of each word
+                          .join(" ") || // Join the array back into a string with spaces
+                          "-"}
+                      </td>
+
                       <td>{maqam?.email || "-"}</td>
                       <td>{maqam?.userAreaId?.name || "-"}</td>
                       <td>
@@ -397,7 +392,16 @@ export const DeleteUser = () => {
                           <button
                             readOnly={loading}
                             className="btn"
-                            onClick={() => deleteUser(maqam)}
+                            onClick={() => {
+                              if (!maqam.isDeleted) {
+                                deleteUser(maqam);
+                              } else {
+                                document
+                                  .getElementById("change-status-modal")
+                                  .showModal();
+                                setSingleUser(maqam);
+                              }
+                            }}
                           >
                             {maqam?.isDeleted ? (
                               <RiDeviceRecoverFill />
@@ -410,6 +414,7 @@ export const DeleteUser = () => {
                           <div className="flex justify-center items-center">
                             <button
                               readOnly={loading}
+                              disabled={maqam?.isDeleted}
                               className="btn"
                               onClick={() => {
                                 document
