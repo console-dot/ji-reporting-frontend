@@ -59,7 +59,12 @@ export const RozOShabDiary = ({ view, compile }) => {
                   readOnly={true}
                   type="number"
                   defaultValue={
-                    document.getElementById("umeedwaranFilled")?.value
+                    parseFloat(
+                      document.getElementById("umeedwaranFilled")?.value
+                    ) +
+                    parseFloat(
+                      document.getElementById("manualUmeedwaran")?.value
+                    )
                   }
                   required
                   name={`umeedwaranFilledSum`}
@@ -118,7 +123,12 @@ export const RozOShabDiary = ({ view, compile }) => {
                 <input
                   readOnly={true}
                   type="number"
-                  defaultValue={document.getElementById("rafaqaFilled")?.value}
+                  defaultValue={
+                    parseFloat(document.getElementById("rafaqaFilled")?.value) +
+                    parseFloat(
+                      document.getElementById("manualRafaqaFilled")?.value
+                    )
+                  }
                   required
                   name={`rafaqaFilledSum`}
                   id={`rafaqaFilledSum`}

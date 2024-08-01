@@ -54,6 +54,7 @@ export const FilterDialog = ({ setFilterAllData, tab ,setIsFilter}) => {
 
   const getFilterData = async () => {
     try {
+     
       const req = await instance.get(`/reports/${userAreaType ==="country" ? "markaz": userAreaType}/${selectedId}`, {
         params: { date: selectedMonth },
         headers: {
@@ -61,10 +62,11 @@ export const FilterDialog = ({ setFilterAllData, tab ,setIsFilter}) => {
           "Content-Type": "application/json",
         },
       });
+ 
       setFilterAllData([req?.data?.data]);
       dispatch({ type: "SUCCESS", payload: req.data?.message });
     } catch (err) {
-      dispatch({ type: "ERROR", payload: err.response.data.message });
+      dispatch({ type: "ERROR", payload: err?.response?.data?.message });
     }
   };
   const getAreaWithType = () => {

@@ -42,6 +42,7 @@ export const ToseeDawat = ({ view, compile }) => {
     const raI = document.getElementById("rafaqa-increase")?.value;
     const raD = document.getElementById("rafaqa-decrease")?.value;
     const totalRafaqa = parseInt(raS) + parseInt(raI) - parseInt(raD);
+
     if (elem) {
       const value = (totalArkaan + totalUmeedwaran) * 3 + totalRafaqa * 2;
       elem.value = value;
@@ -131,7 +132,7 @@ export const ToseeDawat = ({ view, compile }) => {
               <input
                 readOnly={true}
                 type="number"
-                defaultValue={document.getElementById("current")?.value}
+                defaultValue={parseFloat(document.getElementById("current")?.value) +parseFloat(document.getElementById("currentManual")?.value) }
                 required
                 name={`currentSum`}
                 id={`currentSum`}
@@ -186,7 +187,7 @@ export const ToseeDawat = ({ view, compile }) => {
                 <input
                   readOnly={true}
                   type="number"
-                  defaultValue={document.getElementById("meetings")?.value}
+                  defaultValue={parseFloat(document.getElementById("meetings")?.value) +parseFloat(document.getElementById("meetingsManual")?.value) }
                   required
                   name={`meetingsSum`}
                   id={`meetingsSum`}

@@ -10,7 +10,7 @@ const NoSearch = () => (
   </div>
 );
 export const SearchPage = ({ data ,area}) => {
-  
+
   const itemsPerPage = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
