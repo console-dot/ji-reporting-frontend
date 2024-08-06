@@ -209,8 +209,10 @@ export const DeleteUser = () => {
         },
       });
       dispatch({ type: "SUCCESS", payload: req.data?.message });
-      getNazim();
-      setData(nazim);
+      await getNazim();
+      if (nazim) {
+        setData(nazim);
+      }
     } catch (err) {
       dispatch({ type: "ERROR", payload: err?.response?.data?.message });
     }
@@ -220,9 +222,14 @@ export const DeleteUser = () => {
     getAreas();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userAreaType]);
-
   const getAreas = async () => {
     switch (userAreaType) {
+      case "Country":
+        setLoading(true);
+        const data = await instance.get("/locations/country");
+        setLoading(false);
+        setAreas([data.data.data]);
+        break;
       case "Province":
         setAreas(provinces);
         break;
@@ -753,24 +760,46 @@ export const DeleteUser = () => {
                     </span>
                     <div className="flex flex-wrap items-center justify-start border border-primary p-2 rounded-lg">
                       {me?.nazim.toLowerCase() === "country" && (
-                        <div className="form-control">
-                          <label className="label cursor-pointer gap-2">
-                            <input
-                              type="radio"
-                              name="userAreaType"
-                              className="radio checked:bg-blue-500"
-                              checked={userAreaType === "Province"}
-                              value="Province"
-                              onChange={(e) => {
-                                setUserAreaType(e.target.value);
-                                setSearchArea("");
-                                document.getElementById("autocomplete0").value =
-                                  "";
-                              }}
-                            />
-                            <span className="label-text">Province</span>
-                          </label>
-                        </div>
+                        <>
+                          <div className="form-control">
+                            <label className="label cursor-pointer gap-2">
+                              <input
+                                type="radio"
+                                name="userAreaType"
+                                className="radio checked:bg-blue-500"
+                                checked={userAreaType === "Country"}
+                                value="Country"
+                                onChange={(e) => {
+                                  setUserAreaType(e.target.value);
+                                  setSearchArea("");
+                                  document.getElementById(
+                                    "autocomplete0"
+                                  ).value = "";
+                                }}
+                              />
+                              <span className="label-text">Markaz</span>
+                            </label>
+                          </div>
+                          <div className="form-control">
+                            <label className="label cursor-pointer gap-2">
+                              <input
+                                type="radio"
+                                name="userAreaType"
+                                className="radio checked:bg-blue-500"
+                                checked={userAreaType === "Province"}
+                                value="Province"
+                                onChange={(e) => {
+                                  setUserAreaType(e.target.value);
+                                  setSearchArea("");
+                                  document.getElementById(
+                                    "autocomplete0"
+                                  ).value = "";
+                                }}
+                              />
+                              <span className="label-text">Province</span>
+                            </label>
+                          </div>
+                        </>
                       )}
 
                       {(me?.nazim?.toLowerCase() === "country" ||
@@ -864,22 +893,24 @@ export const DeleteUser = () => {
                   {/* NAZIM TYPES */}
                   <div className="w-full">
                     <span className="px-1 py-2 block font-semibold">
-                      Change status to:
+                      Status:
                     </span>
                     <div className="flex  items-center justify-start flex-wrap border border-primary p-2 rounded-lg">
-                      <div className="form-control">
-                        <label className="label cursor-pointer gap-2">
-                          <input
-                            type="radio"
-                            name="nazimType"
-                            className="radio checked:bg-blue-500"
-                            value="nazim"
-                            checked={nazimType === "nazim"}
-                            onChange={() => setNazimType("nazim")}
-                          />
-                          <span className="label-text">Rafiq-Nazim</span>
-                        </label>
-                      </div>
+                      {userAreaType !== "Country" && (
+                        <div className="form-control">
+                          <label className="label cursor-pointer gap-2">
+                            <input
+                              type="radio"
+                              name="nazimType"
+                              className="radio checked:bg-blue-500"
+                              value="nazim"
+                              checked={nazimType === "nazim"}
+                              onChange={() => setNazimType("nazim")}
+                            />
+                            <span className="label-text">Rafiq-Nazim</span>
+                          </label>
+                        </div>
+                      )}
                       <div className="form-control">
                         <label className="label cursor-pointer gap-2">
                           <input
@@ -893,18 +924,20 @@ export const DeleteUser = () => {
                           <span className="label-text">Umeedwaar</span>
                         </label>
                       </div>
-                      <div className="form-control">
-                        <label className="label cursor-pointer gap-2">
-                          <input
-                            type="radio"
-                            name="nazimType"
-                            className="radio checked:bg-blue-500"
-                            value="umeedwaar-nazim"
-                            onChange={() => setNazimType("umeedwaar-nazim")}
-                          />
-                          <span className="label-text">Umeedwaar-Nazim</span>
-                        </label>
-                      </div>
+                      {userAreaType !== "Country" && (
+                        <div className="form-control">
+                          <label className="label cursor-pointer gap-2">
+                            <input
+                              type="radio"
+                              name="nazimType"
+                              className="radio checked:bg-blue-500"
+                              value="umeedwaar-nazim"
+                              onChange={() => setNazimType("umeedwaar-nazim")}
+                            />
+                            <span className="label-text">Umeedwaar-Nazim</span>
+                          </label>
+                        </div>
+                      )}
                       <div className="form-control">
                         <label className="label cursor-pointer gap-2">
                           <input
@@ -918,19 +951,21 @@ export const DeleteUser = () => {
                           <span className="label-text">Rukan</span>
                         </label>
                       </div>
-                      <div className="form-control">
-                        <label className="label cursor-pointer gap-2">
-                          <input
-                            type="radio"
-                            name="nazimType"
-                            className="radio checked:bg-blue-500"
-                            value="rukan-nazim"
-                            checked={nazimType === "rukan-nazim"}
-                            onChange={() => setNazimType("rukan-nazim")}
-                          />
-                          <span className="label-text">Rukan-Nazim</span>
-                        </label>
-                      </div>
+                      {userAreaType !== "Country" && (
+                        <div className="form-control">
+                          <label className="label cursor-pointer gap-2">
+                            <input
+                              type="radio"
+                              name="nazimType"
+                              className="radio checked:bg-blue-500"
+                              value="rukan-nazim"
+                              checked={nazimType === "rukan-nazim"}
+                              onChange={() => setNazimType("rukan-nazim")}
+                            />
+                            <span className="label-text">Rukan-Nazim</span>
+                          </label>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="relative ">
@@ -1294,6 +1329,26 @@ export const DeleteUser = () => {
                             type="radio"
                             name="userAreaType"
                             className="radio checked:bg-blue-500"
+                            checked={userAreaType === "Country"}
+                            value="Country"
+                            onChange={(e) => {
+                              setUserAreaType(e.target.value);
+                              setSearchArea("");
+                              document.getElementById("autocomplete0").value =
+                                "";
+                            }}
+                          />
+                          <span className="label-text">Markaz</span>
+                        </label>
+                      </div>
+                    )}
+                    {me?.nazim.toLowerCase() === "country" && (
+                      <div className="form-control">
+                        <label className="label cursor-pointer gap-2">
+                          <input
+                            type="radio"
+                            name="userAreaType"
+                            className="radio checked:bg-blue-500"
                             checked={userAreaType === "Province"}
                             value="Province"
                             onChange={(e) => {
@@ -1400,19 +1455,21 @@ export const DeleteUser = () => {
                     Change status to:
                   </span>
                   <div className="flex  items-center justify-start flex-wrap border border-primary p-2 rounded-lg">
-                    <div className="form-control">
-                      <label className="label cursor-pointer gap-2">
-                        <input
-                          type="radio"
-                          name="nazimType"
-                          className="radio checked:bg-blue-500"
-                          value="nazim"
-                          checked={nazimType === "nazim"}
-                          onChange={() => setNazimType("nazim")}
-                        />
-                        <span className="label-text">Rafiq-Nazim</span>
-                      </label>
-                    </div>
+                    {userAreaType !== "Country" && (
+                      <div className="form-control">
+                        <label className="label cursor-pointer gap-2">
+                          <input
+                            type="radio"
+                            name="nazimType"
+                            className="radio checked:bg-blue-500"
+                            value="nazim"
+                            checked={nazimType === "nazim"}
+                            onChange={() => setNazimType("nazim")}
+                          />
+                          <span className="label-text">Rafiq-Nazim</span>
+                        </label>
+                      </div>
+                    )}
                     <div className="form-control">
                       <label className="label cursor-pointer gap-2">
                         <input
@@ -1426,18 +1483,20 @@ export const DeleteUser = () => {
                         <span className="label-text">Umeedwaar</span>
                       </label>
                     </div>
-                    <div className="form-control">
-                      <label className="label cursor-pointer gap-2">
-                        <input
-                          type="radio"
-                          name="nazimType"
-                          className="radio checked:bg-blue-500"
-                          value="umeedwaar-nazim"
-                          onChange={() => setNazimType("umeedwaar-nazim")}
-                        />
-                        <span className="label-text">Umeedwaar-Nazim</span>
-                      </label>
-                    </div>
+                    {userAreaType !== "Country" && (
+                      <div className="form-control">
+                        <label className="label cursor-pointer gap-2">
+                          <input
+                            type="radio"
+                            name="nazimType"
+                            className="radio checked:bg-blue-500"
+                            value="umeedwaar-nazim"
+                            onChange={() => setNazimType("umeedwaar-nazim")}
+                          />
+                          <span className="label-text">Umeedwaar-Nazim</span>
+                        </label>
+                      </div>
+                    )}
                     <div className="form-control">
                       <label className="label cursor-pointer gap-2">
                         <input
@@ -1451,19 +1510,21 @@ export const DeleteUser = () => {
                         <span className="label-text">Rukan</span>
                       </label>
                     </div>
-                    <div className="form-control">
-                      <label className="label cursor-pointer gap-2">
-                        <input
-                          type="radio"
-                          name="nazimType"
-                          className="radio checked:bg-blue-500"
-                          value="rukan-nazim"
-                          checked={nazimType === "rukan-nazim"}
-                          onChange={() => setNazimType("rukan-nazim")}
-                        />
-                        <span className="label-text">Rukan-Nazim</span>
-                      </label>
-                    </div>
+                    {userAreaType !== "Country" && (
+                      <div className="form-control">
+                        <label className="label cursor-pointer gap-2">
+                          <input
+                            type="radio"
+                            name="nazimType"
+                            className="radio checked:bg-blue-500"
+                            value="rukan-nazim"
+                            checked={nazimType === "rukan-nazim"}
+                            onChange={() => setNazimType("rukan-nazim")}
+                          />
+                          <span className="label-text">Rukan-Nazim</span>
+                        </label>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="relative ">
@@ -1590,7 +1651,7 @@ export const DeleteUser = () => {
                     ? "(Ilaqa)"
                     : areaDetails?.country
                     ? "(Province)"
-                    : `(${areaDetails?.areaType})`}
+                    : `(${areaDetails?.areaType || "Pakistan"})`}
                 </h4>
               </div>
               <div className="w-full flex justify-start items-center gap-5">
@@ -1645,7 +1706,8 @@ export const DeleteUser = () => {
                   </h4>
                 </div>
               )}
-              {!areaDetails?.country && (
+
+              {!areaDetails?.country && areaDetails.name !== "Pakistan" && (
                 <div className="w-full flex justify-start items-center gap-5">
                   <h4>Province:</h4>
                   <h4 className="text-gray-400 font-bold">
