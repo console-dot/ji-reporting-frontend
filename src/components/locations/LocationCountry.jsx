@@ -51,6 +51,10 @@ export const LocationCountry = () => {
     setLoading(false);
   };
   const handleSubmitEdit = async () => {
+    if (!validateForm(form)) {
+      alert("All fields are required. Please fill out all fields.");
+      return;
+    }
     setLoading(true);
     try {
       const req = await instance.put("/locations/province/" + id, form, {

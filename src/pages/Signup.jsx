@@ -270,6 +270,7 @@ export const Signup = () => {
                 type="month"
                 placeholder="Date of birth"
                 name="dob"
+                min="1947-01"
                 className="w-full text-secondaryText border outline-none border-inputBorder rounded p-2 text-[16px] leading-6 font-inter min-w-[230px]"
                 required
               />

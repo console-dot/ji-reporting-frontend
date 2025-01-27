@@ -10,8 +10,6 @@ export const ResetPassword = () => {
   const { loading, setLoading } = useContext(UIContext);
   const [key, setKey] = useState("");
   const [password, setPassword] = useState("");
-  const [hasLetter, setHasLetter] = useState(false);
-  const [hasNumberOrSpecialChar, setHasNumberOrSpecialChar] = useState(false);
   const [hasMinLength, setHasMinLength] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -27,14 +25,8 @@ export const ResetPassword = () => {
     const newPassword = e.target.value;
     setPassword(newPassword);
 
-    // Check for at least one letter
-    setHasLetter(/[a-zA-Z]/.test(newPassword));
-
-    // Check for at least one number or special character
-    setHasNumberOrSpecialChar(/[\d\W]/.test(newPassword));
-
     // Check for a minimum length of 10 characters
-    setHasMinLength(newPassword.length >= 10);
+    setHasMinLength(newPassword.length >= 8);
   };
 
   const handleReset = async (e) => {
@@ -97,38 +89,6 @@ export const ResetPassword = () => {
             <div className="flex items-center gap-2">
               <input
                 type="radio"
-                name="letter"
-                id="letter"
-                className="custom-radio"
-                checked={hasLetter}
-                readOnly
-              />
-              <span
-                className={hasLetter ? "text-green-800" : "text-destructive"}
-              >
-                1 letter
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="numberOrSpecialChar"
-                id="numberOrSpecialChar"
-                className="custom-radio"
-                checked={hasNumberOrSpecialChar}
-                readOnly
-              />
-              <span
-                className={
-                  hasNumberOrSpecialChar ? "text-green-800" : "text-destructive"
-                }
-              >
-                1 number or special character (example: # ? ! &)
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="radio"
                 name="minLength"
                 id="minLength"
                 className="custom-radio"
@@ -138,7 +98,7 @@ export const ResetPassword = () => {
               <span
                 className={hasMinLength ? "text-green-800" : "text-destructive"}
               >
-                10 characters
+                8 characters
               </span>
             </div>
           </div>
