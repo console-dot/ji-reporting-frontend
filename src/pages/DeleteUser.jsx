@@ -169,7 +169,9 @@ export const DeleteUser = () => {
           Authorization: `Bearer ${localStorage.getItem("@token")}`,
         },
       });
+
       setData(request?.data?.data);
+      console.log("request?.data?.data", request?.data?.data);
       document.getElementById("categorize-filter").close();
       dispatch({ type: "SUCCESS", payload: request.data?.message });
       e.target.reset();
@@ -387,7 +389,11 @@ export const DeleteUser = () => {
             </thead>
             <tbody>
               {paginatedData
-                ?.filter((i) => i?.userAreaId?._id !== me?.userAreaId?._id)
+                ?.filter(
+                  (i) =>
+                    i?.email !== me?.email &&
+                    i?.userRequestId?.status == "accepted"
+                )
                 ?.map((user, index) => (
                   <tr key={user.email} className="border-b w-full">
                     <td class="font-inter md:text-sm text-xs font-medium leading-[16.94px] text-left py-2 w-1/7">
@@ -1088,44 +1094,87 @@ export const DeleteUser = () => {
                                 return true;
                               }
                             })
-                            ?.map((area, index) => (
-                              <div
-                                key={index}
-                                onClick={() => {
-                                  document.getElementById("userAreaId").value =
-                                    area?._id;
-                                  setSelectedId(area?._id);
-                                  document.getElementById(
-                                    "autocomplete0"
-                                  ).value = `${area?.name}${
-                                    userAreaType === "Halqa"
-                                      ? ` - ${area?.parentId?.name} (${area?.parentType})`
+                            ?.map((area, index) =>
+                              Array.isArray(area) ? (
+                                area.map((subArea, subIndex) => (
+                                  <div
+                                    key={`${index}-${subIndex}`}
+                                    onClick={() => {
+                                      document.getElementById(
+                                        "userAreaId"
+                                      ).value = subArea?._id;
+                                      setSelectedId(subArea?._id);
+                                      document.getElementById(
+                                        "autocomplete0"
+                                      ).value = `${subArea?.name}${
+                                        userAreaType === "Halqa"
+                                          ? ` - ${subArea?.parentId?.name} (${subArea?.parentType})`
+                                          : userAreaType === "Ilaqa"
+                                          ? ` - ${subArea?.maqam?.name} (${subArea?.maqam?.province?.name})`
+                                          : userAreaType === "Maqam"
+                                          ? ` - ${subArea?.province?.name} `
+                                          : userAreaType === "Division"
+                                          ? ` - ${subArea?.province?.name}`
+                                          : ""
+                                      }`;
+                                      document
+                                        .getElementById("autocomplete0-list")
+                                        .classList.add("hidden");
+                                    }}
+                                    className="p-2 cursor-pointer hover:bg-gray-100"
+                                  >
+                                    {subArea?.name}
+                                    {userAreaType === "Halqa"
+                                      ? ` - ${subArea?.parentId?.name} (${subArea?.parentType})`
                                       : userAreaType === "Ilaqa"
-                                      ? ` - ${area?.maqam?.name} (${area?.maqam?.province?.name})`
+                                      ? ` - ${subArea?.maqam?.name} (${subArea?.maqam?.province?.name})`
                                       : userAreaType === "Maqam"
-                                      ? ` - ${area?.province?.name} `
+                                      ? ` - ${subArea?.province?.name} `
                                       : userAreaType === "Division"
-                                      ? ` - ${area?.province?.name}`
-                                      : ""
-                                  }`;
-                                  document
-                                    .getElementById("autocomplete0-list")
-                                    .classList.add("hidden");
-                                }}
-                                className="p-2 cursor-pointer hover:bg-gray-100"
-                              >
-                                {area?.name}
-                                {userAreaType === "Halqa"
-                                  ? ` - ${area?.parentId?.name} (${area?.parentType})`
-                                  : userAreaType === "Ilaqa"
-                                  ? ` - ${area?.maqam?.name} (${area?.maqam?.province?.name})`
-                                  : userAreaType === "Maqam"
-                                  ? ` - ${area?.province?.name} `
-                                  : userAreaType === "Division"
-                                  ? ` - ${area?.province?.name}`
-                                  : ""}
-                              </div>
-                            ))
+                                      ? ` - ${subArea?.province?.name}`
+                                      : ""}
+                                  </div>
+                                ))
+                              ) : (
+                                <div
+                                  key={index}
+                                  onClick={() => {
+                                    document.getElementById(
+                                      "userAreaId"
+                                    ).value = area?._id;
+                                    setSelectedId(area?._id);
+                                    document.getElementById(
+                                      "autocomplete0"
+                                    ).value = `${area?.name}${
+                                      userAreaType === "Halqa"
+                                        ? ` - ${area?.parentId?.name} (${area?.parentType})`
+                                        : userAreaType === "Ilaqa"
+                                        ? ` - ${area?.maqam?.name} (${area?.maqam?.province?.name})`
+                                        : userAreaType === "Maqam"
+                                        ? ` - ${area?.province?.name} `
+                                        : userAreaType === "Division"
+                                        ? ` - ${area?.province?.name}`
+                                        : ""
+                                    }`;
+                                    document
+                                      .getElementById("autocomplete0-list")
+                                      .classList.add("hidden");
+                                  }}
+                                  className="p-2 cursor-pointer hover:bg-gray-100"
+                                >
+                                  {area?.name}
+                                  {userAreaType === "Halqa"
+                                    ? ` - ${area?.parentId?.name} (${area?.parentType})`
+                                    : userAreaType === "Ilaqa"
+                                    ? ` - ${area?.maqam?.name} (${area?.maqam?.province?.name})`
+                                    : userAreaType === "Maqam"
+                                    ? ` - ${area?.province?.name} `
+                                    : userAreaType === "Division"
+                                    ? ` - ${area?.province?.name}`
+                                    : ""}
+                                </div>
+                              )
+                            )
                         : "No Area found"}
                     </div>
                   </div>

@@ -215,6 +215,10 @@ export const LocationDivision = () => {
     }
   };
   const handleSubmitDistrictEdit = async () => {
+    if (!validateForm(formDistrict)) {
+      alert("All fields are required. Please fill out all fields.");
+      return;
+    }
     setLoading(true);
     try {
       const req = await instance.put(
@@ -272,6 +276,10 @@ export const LocationDivision = () => {
     }
   };
   const handleSubmitTehsilEdit = async () => {
+    if (!validateForm(formTehsil)) {
+      alert("All fields are required. Please fill out all fields.");
+      return;
+    }
     setLoading(true);
     try {
       const req = await instance.put("/locations/tehsil/" + id, formTehsil, {
@@ -328,6 +336,10 @@ export const LocationDivision = () => {
     setLoading(false);
   };
   const handleSubmitHalqaEdit = async () => {
+    if (!validateForm(formHalqa)) {
+      alert("All fields are required. Please fill out all fields.");
+      return;
+    }
     setLoading(true);
     try {
       const req = await instance.put("/locations/halqa/" + id, formHalqa, {
@@ -446,7 +458,9 @@ export const LocationDivision = () => {
         .filter(
           (dis) =>
             dis?.name.toLowerCase().includes(value.toLowerCase()) ||
-            dis?.province?.name.toLowerCase().includes(value.toLowerCase())
+            dis?.division?.province?.name
+              .toLowerCase()
+              .includes(value.toLowerCase())
         );
 
       setFilteredData(filteredDistricts);
@@ -457,8 +471,17 @@ export const LocationDivision = () => {
         .filter(
           (teh) =>
             teh?.name.toLowerCase().includes(value.toLowerCase()) ||
-            teh?.maqam?.name.toLowerCase().includes(value.toLowerCase())
+            teh?.district?.name.toLowerCase().includes(value.toLowerCase()) ||
+            teh?.district?.division?.name
+              .toLowerCase()
+              .includes(value.toLowerCase()) ||
+            teh?.district?.division?.province?.name
+              .toLowerCase()
+              .includes(value.toLowerCase())
         );
+
+      const temp = tehsils?.map((tehsil) => tehsil);
+
       setFilteredData(filteredTehsils);
       setSearchData(filteredTehsils);
     } else if (view === "division") {
@@ -467,8 +490,9 @@ export const LocationDivision = () => {
         .filter(
           (div) =>
             div?.name.toLowerCase().includes(value.toLowerCase()) ||
-            div?.maqam?.name.toLowerCase().includes(value.toLowerCase())
+            div?.province?.name.toLowerCase().includes(value.toLowerCase())
         );
+
       setFilteredData(filteredDivisions);
       setSearchData(filteredDivisions);
     }

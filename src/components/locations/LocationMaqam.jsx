@@ -308,6 +308,10 @@ export const LocationMaqam = () => {
   };
 
   const handleSubmitEditIlaqa = async () => {
+    if (!validateForm(ilaqaForm)) {
+      alert("All fields are required. Please fill out all fields.");
+      return;
+    }
     setLoading(true);
     try {
       const req = await instance.put("/locations/ilaqa/" + id, ilaqaForm, {
